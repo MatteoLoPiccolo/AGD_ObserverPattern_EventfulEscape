@@ -12,6 +12,7 @@ public class KeyView : MonoBehaviour, IInteractable
         currentKeys++;
 
         EventService.Instance.OnKeyPickedUp.InvokeEvent(currentKeys);
+
         gameObject.SetActive(false);
     }
 }
