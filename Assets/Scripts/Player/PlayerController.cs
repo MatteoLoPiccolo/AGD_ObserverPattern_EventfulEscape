@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController
@@ -25,14 +23,15 @@ public class PlayerController
 
         this.playerScriptableObject = playerScriptableObject;
         this.playerScriptableObject.KeysEquipped = 0;
-        LightSwitchView.OnLightSwitchToggled += onLightSwitch;
+        EventService.Instance.OnLightSwitchToggled.AddListener(OnLightSwitch);
         playerState = PlayerState.InDark;
     }
 
     ~PlayerController()
     {
-        LightSwitchView.OnLightSwitchToggled -= onLightSwitch;
+        EventService.Instance.OnLightSwitchToggled.RemoveListener(OnLightSwitch);
     }
+
     public void Interact() => IsInteracted = Input.GetKeyDown(KeyCode.E) ? true : (Input.GetKeyUp(KeyCode.E) ? false : IsInteracted);
 
     public void Jump(Rigidbody playerRigidbody, Transform transform)
@@ -78,7 +77,7 @@ public class PlayerController
         position = (transform.position) + (velocity * movement) * Time.fixedDeltaTime;
     }
 
-    private void onLightSwitch()
+    private void OnLightSwitch()
     {
         if (PlayerState == PlayerState.InDark)
             PlayerState = PlayerState.None;
