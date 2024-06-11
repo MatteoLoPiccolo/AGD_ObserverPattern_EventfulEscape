@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController
@@ -27,14 +25,17 @@ public class PlayerController
         playerState = PlayerState.InDark;
 
         EventService.Instance.OnLightSwitchToggled.AddListener(onLightSwitch);
+        EventService.Instance.OnLightsOffByGhostEvent.AddListener(OnLightsTurnedOffByGhost);
         EventService.Instance.OnKeyPickedUp.AddListener(onKeysPickedUp);
     }
 
     ~PlayerController()
     {
         EventService.Instance.OnLightSwitchToggled.RemoveListener(onLightSwitch);
+        EventService.Instance.OnLightsOffByGhostEvent.RemoveListener(OnLightsTurnedOffByGhost);
         EventService.Instance.OnKeyPickedUp.RemoveListener(onKeysPickedUp);
     }
+
     public void Interact() => IsInteracted = Input.GetKeyDown(KeyCode.E) ? true : (Input.GetKeyUp(KeyCode.E) ? false : IsInteracted);
 
     public void Jump(Rigidbody playerRigidbody, Transform transform)
@@ -71,6 +72,7 @@ public class PlayerController
         mouseX = Input.GetAxis("Mouse X");
         velocity = Input.GetKey(KeyCode.LeftShift) ? playerScriptableObject.sprintSpeed : playerScriptableObject.walkSpeed;
     }
+
     private void calculatePositionRotation(Rigidbody playerRigidbody, Transform transform, out Quaternion rotation, out Vector3 position)
     {
         Vector3 lookRotation = new Vector3(0, mouseX * playerScriptableObject.sensitivity, 0);
@@ -87,6 +89,9 @@ public class PlayerController
         else
             PlayerState = PlayerState.InDark;
     }
+
+    private void OnLightsTurnedOffByGhost() => PlayerState = PlayerState.InDark;
+
     private void onKeysPickedUp(int keys)
     {
         KeysEquipped = keys;
